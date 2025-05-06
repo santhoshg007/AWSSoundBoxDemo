@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DBS Webhook Test</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7f9;
+      color: #333;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    pre {
+      margin-top: 30px;
+      background-color: #ecf0f1;
+      padding: 20px;
+      border-radius: 6px;
+      width: 80%;
+      max-width: 800px;
+      overflow-x: auto;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <h2>Send Test DBS Webhook</h2>
+  <button onclick="sendTestPayload()">Send Test Payload</button>
+
+  <pre id="response">Click the button to send a test payload.</pre>
+
+  <footer>Test Client for DBS Webhook | Localhost:3000</footer>
+
+  <script>
+    async function sendTestPayload() {
+      const payload = {
+        "header": {
+          "msgId": "1545357575227",
+          "timeStamp": "2022-09-22T05:16:11.222Z"
+        },
+        "data": [
+          {
+            "txnResponse": {
+              "txnStatus": "ACTC",
+              "txnStatusCode": "H502",
+              "txnStatusDescription": "Payment successful",
+              "merchantReference": "1545357575227",
+              "transactionId": "133b5c3e-9c9e-4b6f-900d-bd767ea9b949",
+              "customer": null,
+              "references": [
+                {
+                  "type": "PT01",
+                  "transactionReference": "7rwerg8732y32y4gsfhg8",
+                  "amount": "10"
+                }
+              ],
+              "version": "2.1"
+            }
+          }
+        ]
+      };
+
+      try {
+        const res = await fetch('http://localhost:3000/dbs/webhook', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const text = await res.text();
+        document.getElementById('response').textContent = `✅ Server Response:\n${text}`;
+      } catch (err) {
+        document.getElementById('response').textContent = `❌ Error:\n${err}`;
+      }
+    }
+  </script>
+</body>
+</html>
